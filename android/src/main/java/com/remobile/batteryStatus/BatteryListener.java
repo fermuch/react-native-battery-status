@@ -181,6 +181,8 @@ public class BatteryListener extends CordovaPlugin {
         try {
             params.putString("level", info.getString("level"));
             params.putBoolean("isCharging", info.getBoolean("isCharging"));
+            params.putString("health", info.getString("health"));
+            params.putBoolean("isPlugged", info.getString("isPlugged"));
             this.sendJSEvent("BATTERY_STATUS_EVENT", params);
         } catch (JSONException e) {
             LOG.e(LOG_TAG, e.getMessage(), e);
