@@ -43,6 +43,19 @@ protected List<ReactPackage> getPackages() {
 }
 
 ```
+## Extra installtion
+### Android
+* This plugin uses react-native-cordova internally. So you need to add it to your project too. Follow these steps to install react-native-cordova.
+* Android:
+* In `android/settings.gradle`
+```gradle
+...
+include ':react-native-cordova'
+project(':react-native-cordova').projectDir = new File(settingsDir, '../node_modules/@remobile/react-native-cordova/android')
+```
+
+### Ios:
+* TBD
 
 ## Usage
 

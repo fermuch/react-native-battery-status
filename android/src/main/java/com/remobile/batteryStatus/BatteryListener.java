@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.BatteryManager;
 
 import com.remobile.cordova.*;
 import com.facebook.react.bridge.*;
@@ -126,38 +127,45 @@ public class BatteryListener extends CordovaPlugin {
      * @return a JSONObject containing the battery status information
      */
     private JSONObject getBatteryInfo(Intent batteryIntent) {
+
+        // Are we charging / charged?
+        int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL;
+        String health = "unknown";
+        switch (batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, 0)) {
+            case android.os.BatteryManager.BATTERY_HEALTH_COLD:
+                health = "cold";
+                break;
+            case android.os.BatteryManager.BATTERY_HEALTH_DEAD:
+                health = "dead";
+                break;
+            case android.os.BatteryManager.BATTERY_HEALTH_GOOD:
+                health = "good";
+                break;
+            case android.os.BatteryManager.BATTERY_HEALTH_OVERHEAT:
+                health = "overheat";
+                break;
+            case android.os.BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
+                health = "over_voltage";
+                break;
+            case android.os.BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE:
+                health = "unspecified_failure";
+                break;
+            default:
+                health = "unknown";
+                break;
+        }
         JSONObject obj = new JSONObject();
         try {
-            obj.put("level", batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, 0));
             obj.put("isPlugged", batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_PLUGGED, -1) > 0 ? true : false);
-            String health = "unknown";
-            switch (batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, 0)) {
-                case android.os.BatteryManager.BATTERY_HEALTH_COLD:
-                    health = "cold";
-                    break;
-                case android.os.BatteryManager.BATTERY_HEALTH_DEAD:
-                    health = "dead";
-                    break;
-                case android.os.BatteryManager.BATTERY_HEALTH_GOOD:
-                    health = "good";
-                    break;
-                case android.os.BatteryManager.BATTERY_HEALTH_OVERHEAT:
-                    health = "overheat";
-                    break;
-                case android.os.BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
-                    health = "over_voltage";
-                    break;
-                case android.os.BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE:
-                    health = "unspecified_failure";
-                    break;
-                default:
-                    health = "unknown";
-                    break;
-            }
             obj.put("health", health);
+            obj.put ("isCharging", isCharging);
+            obj.put ("level", batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, 0)); // a new JSONObject()
         } catch (JSONException e) {
             LOG.e(LOG_TAG, e.getMessage(), e);
         }
+        System.out.println(obj);
         return obj;
     }
 
@@ -169,8 +177,11 @@ public class BatteryListener extends CordovaPlugin {
      */
     private void updateBatteryInfo(Intent batteryIntent) {
         JSONObject info = this.getBatteryInfo(batteryIntent);
+        WritableMap params = Arguments.createMap();
         try {
-            this.sendJSEvent("BATTERY_STATUS_EVENT", JsonConvert.jsonToReact(info));
+            params.putString("level", info.getString("level"));
+            params.putBoolean("isCharging", info.getBoolean("isCharging"));
+            this.sendJSEvent("BATTERY_STATUS_EVENT", params);
         } catch (JSONException e) {
             LOG.e(LOG_TAG, e.getMessage(), e);
         }
