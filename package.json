@@ -1,12 +1,16 @@
 {
-    "name": "@remobile/react-native-battery-status",
-    "version": "1.0.3",
-    "description": "A battery-status for react-native",
+    "name": "@fermuch/react-native-battery-status",
+    "version": "1.1.0",
+    "description": "A battery-status for react-native (fork of @remobile/react-native-battery-status)",
     "main": "index.js",
     "author": {
         "name": "YunJiang.Fang",
         "email": "42550564@qq.com"
     },
+    "maintainers": [{
+        "name": "Fernando Mumbach",
+        "email": "fermuch@cryptolab.net"
+    }],
     "license": "MIT",
     "keywords": [
         "react-native",
@@ -19,12 +23,12 @@
         "remobile",
         "mobile"
     ],
-    "homepage": "https://github.com/remobile/react-native-battery-status",
+    "homepage": "https://github.com/fermuch/react-native-battery-status",
     "bugs": {
-        "url": "https://github.com/remobile/react-native-battery-status/issues"
+        "url": "https://github.com/fermuch/react-native-battery-status/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/remobile/react-native-battery-status.git"
+        "url": "git://github.com/fermuch/react-native-battery-status.git"
     }
 }
