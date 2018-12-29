@@ -132,8 +132,9 @@ public class BatteryListener extends CordovaPlugin {
         int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
         boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL;
+        int healthCode = batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_HEALTH, 0);
         String health = "unknown";
-        switch (batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, 0)) {
+        switch (batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_HEALTH, 0)) {
             case android.os.BatteryManager.BATTERY_HEALTH_COLD:
                 health = "cold";
                 break;
@@ -160,6 +161,7 @@ public class BatteryListener extends CordovaPlugin {
         try {
             obj.put("isPlugged", batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_PLUGGED, -1) > 0 ? true : false);
             obj.put("health", health);
+            obj.put("healthCode", healthCode);
             obj.put ("isCharging", isCharging);
             obj.put ("level", batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, 0)); // a new JSONObject()
         } catch (JSONException e) {
@@ -182,6 +184,7 @@ public class BatteryListener extends CordovaPlugin {
             params.putString("level", info.getString("level"));
             params.putBoolean("isCharging", info.getBoolean("isCharging"));
             params.putString("health", info.getString("health"));
+            params.putInt("healthCode", info.getInt("healthCode"));
             params.putBoolean("isPlugged", info.getBoolean("isPlugged"));
             this.sendJSEvent("BATTERY_STATUS_EVENT", params);
         } catch (JSONException e) {
